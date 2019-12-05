@@ -1,12 +1,12 @@
 from copy import copy
-import node
-import nodeModel
-import link
-import linkModel
+from dta import node
+from dta import nodeModel
+from dta import link
+from dta import linkModel
 import sys
 import traceback
-import utils
-import units
+from dta import utils
+from dta import units
 import numpy.random
 
 INFINITY = 99999

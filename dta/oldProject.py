@@ -1,4 +1,4 @@
-from network import Network
+from .network import Network
 import scipy.stats
 import numpy
 import math

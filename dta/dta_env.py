@@ -1,6 +1,6 @@
-from volumes import getVolumes
-from initConfig import getInitConfig
-from networkModel import NetworkModel
+from .volumes import getVolumes
+from .initConfig import getInitConfig
+from .networkModel import NetworkModel
 import numpy.random as random
 
 class dta_env():
@@ -16,6 +16,12 @@ class dta_env():
         self.timeHorizon = warmup+(interval*numIntervals)
         self.warmup = warmup
         self.net = NetworkModel(self.timeHorizon)
+
+        # # dimensionality of action and state space, as properties for the RL model
+        # self.action_space.dim = # TODO
+        # self.state_space.dim = # TODO
+        # self.action_space.mins = # TODO
+        # self.action_space.maxs = # TODO
         
     
     def reset(self,seed=1831):
@@ -95,3 +101,10 @@ class dta_env():
 
         self.net.setConfig(self.cfg)
         pass
+    
+    def random_action(self):
+        """
+        Generate a random action, to be used before RL model training has stabilized.
+        """
+        # TODO: complete
+        raise NotImplementedError()

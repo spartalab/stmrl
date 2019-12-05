@@ -1,5 +1,5 @@
-from link import Link
-from units import *
+from .link import Link
+from .units import *
 
 class NotYetAttemptedException(Exception):
    pass

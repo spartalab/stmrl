@@ -1,7 +1,7 @@
-from volumes import getVolumes
-from initConfig import getInitConfig
-from networkModel import NetworkModel
-from dta_env import dta_env
+from .volumes import getVolumes
+from .initConfig import getInitConfig
+from .networkModel import NetworkModel
+from .dta_env import dta_env
 
 def main():
     interval = 5*60
