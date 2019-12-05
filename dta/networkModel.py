@@ -1,6 +1,6 @@
 from dta import linkModel
 from dta import nodeModel
-from .network import Network, OD, StochasticOD
+from network import Network, OD, StochasticOD
 
 
 
@@ -230,7 +230,79 @@ class NetworkModel(Network):
                         ex,wx,
                         erx,wrx]
 
-    
+    def constraints(self):
+        mins = {
+            'nb ramp' : 0,
+            'sb ramp' : 0,
+
+            'wx' : {
+                'split 00' : 0.,
+                'split 01' : 0.,
+                'split 10' : 0.,
+                'split 11' : 0.,
+                'barrier 0' : 5.,
+                'barrier 1' : 5.
+            },
+
+            'ex' : {
+                'split 00' : 0.,
+                'split 01' : 0.,
+                'split 10' : 0.,
+                'split 11' : 0.,
+                'barrier 0' : 5.,
+                'barrier 1' : 5.
+            },
+            
+            'wrx' : {
+                'split 00' : 0.,
+                'barrier 0' : 5.,
+                'barrier 1' : 5.
+            },
+
+            'erx' : {
+                'split 01' : 0.,
+                'barrier 0' : 5.,
+                'barrier 1' : 5.
+            }
+        }
+
+        maxs = {
+            'nb ramp' : 3600,
+            'sb ramp' : 3600,
+
+            'wx' : {
+                'split 00' : 1.,
+                'split 01' : 1.,
+                'split 10' : 1.,
+                'split 11' : 1.,
+                'barrier 0' : 120.,
+                'barrier 1' : 120.
+            },
+
+            'ex' : {
+                'split 00' : 1.,
+                'split 01' : 1.,
+                'split 10' : 1.,
+                'split 11' : 1.,
+                'barrier 0' : 120.,
+                'barrier 1' : 120.
+            },
+            
+            'wrx' : {
+                'split 00' : 1.,
+                'barrier 0' : 120.,
+                'barrier 1' : 120.
+            },
+
+            'erx' : {
+                'split 01' : 1.,
+                'barrier 0' : 120.,
+                'barrier 1' : 120.
+            }
+        }
+
+        return mins, maxs
+
     #set intersection and ramp parameters
     def setConfig(self,config):
         self.nodes[20].setParams(config['nb ramp'])

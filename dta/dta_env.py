@@ -1,6 +1,6 @@
-from .volumes import getVolumes
-from .initConfig import getInitConfig
-from .networkModel import NetworkModel
+from volumes import getVolumes
+from initConfig import getInitConfig
+from networkModel import NetworkModel
 import numpy.random as random
 
 class dta_env():
@@ -18,10 +18,10 @@ class dta_env():
         self.net = NetworkModel(self.timeHorizon)
 
         # # dimensionality of action and state space, as properties for the RL model
-        # self.action_space.dim = # TODO
-        # self.state_space.dim = # TODO
-        # self.action_space.mins = # TODO
-        # self.action_space.maxs = # TODO
+        self.action_space.dim = 20
+        self.state_space.dim = 51# TODO
+        self.action_space.mins = self.net.constraints()# TODO
+        self.action_space.maxs = self.net.constraints() # TODO
         
     
     def reset(self,seed=1831):
@@ -69,38 +69,40 @@ class dta_env():
         return next_state, last_step_reward, done
 
     def updateConfig(self,actions):
-        if 'nb ramp' in actions:
-            self.cfg['nb ramp'] += actions['nb ramp']*25/3600
-        if 'sb ramp' in actions:
-            self.cfg['sb ramp'] += actions['sb ramp']*25/3600
+        # if 'nb ramp' in actions:
+        #     self.cfg['nb ramp'] += actions['nb ramp']*25/3600
+        # if 'sb ramp' in actions:
+        #     self.cfg['sb ramp'] += actions['sb ramp']*25/3600
 
-        if 'wx' in actions:
-            self.cfg['wx']['split 00'] += 0.05*actions['wx']['split 00']
-            self.cfg['wx']['split 01'] += 0.05*actions['wx']['split 01']
-            self.cfg['wx']['split 10'] += 0.05*actions['wx']['split 10']
-            self.cfg['wx']['split 11'] += 0.05*actions['wx']['split 11']
-            self.cfg['wx']['barrier 0'] += 5*actions['wx']['barrier 0']
-            self.cfg['wx']['barrier 1'] += 5*actions['wx']['barrier 1']
-        if 'ex' in actions:
-            self.cfg['ex']['split 00'] += 0.05*actions['ex']['split 00']
-            self.cfg['ex']['split 01'] += 0.05*actions['ex']['split 01']
-            self.cfg['ex']['split 10'] += 0.05*actions['ex']['split 10']
-            self.cfg['ex']['split 11'] += 0.05*actions['ex']['split 11']
-            self.cfg['ex']['barrier 0'] += 5*actions['ex']['barrier 0']
-            self.cfg['ex']['barrier 1'] += 5*actions['ex']['barrier 1']
+        # if 'wx' in actions:
+        #     self.cfg['wx']['split 00'] += 0.05*actions['wx']['split 00']
+        #     self.cfg['wx']['split 01'] += 0.05*actions['wx']['split 01']
+        #     self.cfg['wx']['split 10'] += 0.05*actions['wx']['split 10']
+        #     self.cfg['wx']['split 11'] += 0.05*actions['wx']['split 11']
+        #     self.cfg['wx']['barrier 0'] += 5*actions['wx']['barrier 0']
+        #     self.cfg['wx']['barrier 1'] += 5*actions['wx']['barrier 1']
+        # if 'ex' in actions:
+        #     self.cfg['ex']['split 00'] += 0.05*actions['ex']['split 00']
+        #     self.cfg['ex']['split 01'] += 0.05*actions['ex']['split 01']
+        #     self.cfg['ex']['split 10'] += 0.05*actions['ex']['split 10']
+        #     self.cfg['ex']['split 11'] += 0.05*actions['ex']['split 11']
+        #     self.cfg['ex']['barrier 0'] += 5*actions['ex']['barrier 0']
+        #     self.cfg['ex']['barrier 1'] += 5*actions['ex']['barrier 1']
 
-        if 'wrx' in actions:
-            self.cfg['wrx']['split 00'] += 0.05*actions['wrx']['split 00']
-            self.cfg['wrx']['barrier 0'] += 5*actions['wrx']['barrier 0']
-            self.cfg['wrx']['barrier 1'] += 5*actions['wrx']['barrier 1']
+        # if 'wrx' in actions:
+        #     self.cfg['wrx']['split 00'] += 0.05*actions['wrx']['split 00']
+        #     self.cfg['wrx']['barrier 0'] += 5*actions['wrx']['barrier 0']
+        #     self.cfg['wrx']['barrier 1'] += 5*actions['wrx']['barrier 1']
 
-        if 'erx' in actions:
-            self.cfg['erx']['split 01'] += 0.05*actions['erx']['split 01']
-            self.cfg['erx']['barrier 0'] += 5*actions['erx']['barrier 0']
-            self.cfg['erx']['barrier 1'] += 5*actions['erx']['barrier 1']
+        # if 'erx' in actions:
+        #     self.cfg['erx']['split 01'] += 0.05*actions['erx']['split 01']
+        #     self.cfg['erx']['barrier 0'] += 5*actions['erx']['barrier 0']
+        #     self.cfg['erx']['barrier 1'] += 5*actions['erx']['barrier 1']
 
-        self.net.setConfig(self.cfg)
+        # self.net.setConfig(self.cfg)
         pass
+
+
     
     def random_action(self):
         """
