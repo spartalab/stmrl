@@ -1,5 +1,5 @@
 from copy import copy
-from .node import Node
+from node import Node
 
 class WrongNodeTypeException(Exception):
    pass

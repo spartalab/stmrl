@@ -19,9 +19,9 @@ class dta_env():
 
         # # dimensionality of action and state space, as properties for the RL model
         self.action_space.dim = 20
-        self.state_space.dim = 51# TODO
-        self.action_space.mins = self.net.constraints()# TODO
-        self.action_space.maxs = self.net.constraints() # TODO
+        self.state_space.dim = 51
+        self.action_space.mins = self.net.constraints()[0]
+        self.action_space.maxs = self.net.constraints()[1]
         
     
     def reset(self,seed=1831):
@@ -100,10 +100,54 @@ class dta_env():
         #     self.cfg['erx']['barrier 1'] += 5*actions['erx']['barrier 1']
 
         # self.net.setConfig(self.cfg)
-        pass
+        deltas = self.getDeltas(actions)
+        
+        self.cfg['nb ramp'] += deltas['nb ramp']
+        self.cfg['sb ramp'] += deltas['sb ramp']
 
+        self.cfg['wx']['split 00'] += deltas['wx']['split 00']
+        self.cfg['wx']['split 01'] += deltas['wx']['split 01']
+        self.cfg['wx']['split 10'] += deltas['wx']['split 10']
+        self.cfg['wx']['split 11'] += deltas['wx']['split 11']
+        self.cfg['wx']['barrier 0'] += deltas['wx']['barrier 0']
+        self.cfg['wx']['barrier 1'] += deltas['wx']['barrier 1']
 
+        self.cfg['ex']['split 00'] += deltas['ex']['split 00']
+        self.cfg['ex']['split 01'] += deltas['ex']['split 01']
+        self.cfg['ex']['split 10'] += deltas['ex']['split 10']
+        self.cfg['ex']['split 11'] += deltas['ex']['split 11']
+        self.cfg['ex']['barrier 0'] += deltas['ex']['barrier 0']
+        self.cfg['ex']['barrier 1'] += deltas['ex']['barrier 1']
+
+        self.cfg['wrx']['split 00'] += deltas['wrx']['split 00']
+
+        self.cfg['erx']['split 01'] += deltas['erx']['split 01']
+
+        for key in self.cfg['wx']:
+            self.cfg['wx'][key] = max(self.action_space.mins['wx'][key],
+                                    min(self.action_space.maxs['wx'][key],self.cfg['wx'][key]))
+        for key in self.cfg['ex']:
+            self.cfg['ex'][key] = max(self.action_space.mins['ex'][key],
+                                    min(self.action_space.maxs['ex'][key],self.cfg['ex'][key]))
+        for key in self.cfg['erx']:
+            self.cfg['erx'][key] = max(self.action_space.mins['erx'][key],
+                                    min(self.action_space.maxs['erx'][key],self.cfg['erx'][key]))
+
+        for key in self.cfg['wrx']:
+            self.cfg['wrx'][key] = max(self.action_space.mins['wrx'][key],
+                                    min(self.action_space.maxs['wrx'][key],self.cfg['wrx'][key]))
+
+        self.cfg['nb ramp'] = max(self.action_space.mins['nb ramp'],
+                                min(self.action_space.maxs['nb ramp'],
+                                self.cfg['nb ramp']))
     
+        self.cfg['sb ramp'] = max(self.action_space.mins['sb ramp'],
+                                min(self.action_space.maxs['sb ramp'],
+                                self.cfg['sb ramp']))
+        
+        self.net.setConfig(self.cfg)
+
+        
     def random_action(self):
         """
         Generate a random action, to be used before RL model training has stabilized.
