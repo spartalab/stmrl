@@ -127,8 +127,45 @@ class dta_env():
         """
         Generate a random action, to be used before RL model training has stabilized.
         """
-        # TODO: complete
-        raise NotImplementedError()
+        rng = random.RandomState()
+
+        action = {
+            'nb ramp' : random.uniform(-1.,1.),
+            'sb ramp' : random.uniform(-1.,1.),
+
+            'wx' : {
+                'split 00' : random.uniform(-1.,1.),
+                'split 01' : random.uniform(-1.,1.),
+                'split 10' : random.uniform(-1.,1.),
+                'split 11' : random.uniform(-1.,1.),
+                'barrier 0': random.uniform(-1.,1.),
+                'barrier 1': random.uniform(-1.,1.)
+            },
+
+            'ex' : {
+                'split 00' : random.uniform(-1.,1.),
+                'split 01' : random.uniform(-1.,1.),
+                'split 10' : random.uniform(-1.,1.),
+                'split 11' : random.uniform(-1.,1.)
+                'barrier 0': random.uniform(-1.,1.),
+                'barrier 1': random.uniform(-1.,1.)
+            },
+            
+            'wrx' : {
+                'split 00' : random.uniform(-1.,1.),
+                'barrier 0': random.uniform(-1.,1.),
+                'barrier 1': random.uniform(-1.,1.)
+            },
+
+            'erx' : {
+                'split 01' : random.uniform(-1.,1.),
+                'barrier 0': random.uniform(-1.,1.),
+                'barrier 1': random.uniform(-1.,1.)
+            }
+        }
+
+
+        return action
 
     def getDeltas(self,action):
         deltas = dict()
@@ -155,6 +192,6 @@ class dta_env():
         deltas['nb ramp'] = action['nb ramp'] * incs['ramp']
         deltas['sb ramp'] = action['sb ramp'] * incs['ramp']
 
-
+        return deltas
 
         
