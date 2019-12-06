@@ -1,6 +1,6 @@
-from volumes import getVolumes
-from initConfig import getInitConfig
-from networkModel import NetworkModel
+from .volumes import getVolumes
+from .initConfig import getInitConfig
+from .networkModel import NetworkModel
 import numpy.random as random
 
 class dta_env():
@@ -146,7 +146,7 @@ class dta_env():
                 'split 00' : random.uniform(-1.,1.),
                 'split 01' : random.uniform(-1.,1.),
                 'split 10' : random.uniform(-1.,1.),
-                'split 11' : random.uniform(-1.,1.)
+                'split 11' : random.uniform(-1.,1.),
                 'barrier 0': random.uniform(-1.,1.),
                 'barrier 1': random.uniform(-1.,1.)
             },

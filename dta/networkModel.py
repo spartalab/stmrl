@@ -1,6 +1,6 @@
 from dta import linkModel
 from dta import nodeModel
-from network import Network, OD, StochasticOD
+from .network import Network, OD, StochasticOD
 
 
 
