@@ -17,13 +17,13 @@ class dta_env():
         self.warmup = warmup
         self.net = NetworkModel(self.timeHorizon)
 
-        # # dimensionality of action and state space, as properties for the RL model
-        self.action_space.dim = 20
-        self.state_space.dim = 51
-        self.action_space.mins = self.net.constraints()[0]
-        self.action_space.maxs = self.net.constraints()[1]
+        # dimensionality of action and state space, as properties for the RL model
+        self.action_dim = 20
+        self.state_dim = 51
+        self.action_mins = self.net.constraints()[0]
+        self.action_maxs = self.net.constraints()[1]
         
-        self.action_space.maxIncrements = {
+        self.action_max_increments = {
             'split' : 0.05, #percent
             'barrier' : 10., #timesteps
             'ramp' : 25/3600     #people per timestep
@@ -45,6 +45,11 @@ class dta_env():
         self.net.calculateTravelTimes(range(self.warmup))
         self.curTime = self.warmup
         self.elapsedIntervals = 0
+
+        state = (self.elapsedIntervals,self.net.getState(),self.cfg) # fetch state
+
+        return state
+
     
     def step(self, a=None):
         """
@@ -99,25 +104,25 @@ class dta_env():
         self.cfg['erx']['split 01'] += deltas['erx']['split 01']
 
         for key in self.cfg['wx']:
-            self.cfg['wx'][key] = max(self.action_space.mins['wx'][key],
-                                    min(self.action_space.maxs['wx'][key],self.cfg['wx'][key]))
+            self.cfg['wx'][key] = max(self.action_mins['wx'][key],
+                                    min(self.action_maxs['wx'][key],self.cfg['wx'][key]))
         for key in self.cfg['ex']:
-            self.cfg['ex'][key] = max(self.action_space.mins['ex'][key],
-                                    min(self.action_space.maxs['ex'][key],self.cfg['ex'][key]))
+            self.cfg['ex'][key] = max(self.action_mins['ex'][key],
+                                    min(self.action_maxs['ex'][key],self.cfg['ex'][key]))
         for key in self.cfg['erx']:
-            self.cfg['erx'][key] = max(self.action_space.mins['erx'][key],
-                                    min(self.action_space.maxs['erx'][key],self.cfg['erx'][key]))
+            self.cfg['erx'][key] = max(self.action_mins['erx'][key],
+                                    min(self.action_maxs['erx'][key],self.cfg['erx'][key]))
 
         for key in self.cfg['wrx']:
-            self.cfg['wrx'][key] = max(self.action_space.mins['wrx'][key],
-                                    min(self.action_space.maxs['wrx'][key],self.cfg['wrx'][key]))
+            self.cfg['wrx'][key] = max(self.action_mins['wrx'][key],
+                                    min(self.action_maxs['wrx'][key],self.cfg['wrx'][key]))
 
-        self.cfg['nb ramp'] = max(self.action_space.mins['nb ramp'],
-                                min(self.action_space.maxs['nb ramp'],
+        self.cfg['nb ramp'] = max(self.action_mins['nb ramp'],
+                                min(self.action_maxs['nb ramp'],
                                 self.cfg['nb ramp']))
     
-        self.cfg['sb ramp'] = max(self.action_space.mins['sb ramp'],
-                                min(self.action_space.maxs['sb ramp'],
+        self.cfg['sb ramp'] = max(self.action_mins['sb ramp'],
+                                min(self.action_maxs['sb ramp'],
                                 self.cfg['sb ramp']))
         
         self.net.setConfig(self.cfg)
@@ -169,17 +174,24 @@ class dta_env():
 
     def getDeltas(self,action):
         deltas = dict()
-        incs = self.action_space.maxIncrements
+        incs = self.action_max_increments
         
+        deltas['wx'] = {}
+
         deltas['wx']['split 00'] = action['wx']['split 00'] * incs['split']
         deltas['wx']['split 01'] = action['wx']['split 01'] * incs['split']
         deltas['wx']['split 10'] = action['wx']['split 10'] * incs['split']
         deltas['wx']['split 11'] = action['wx']['split 11'] * incs['split']
+
+        deltas['ex'] = {}
         
         deltas['ex']['split 00'] = action['ex']['split 00'] * incs['split']
         deltas['ex']['split 01'] = action['ex']['split 01'] * incs['split']
         deltas['ex']['split 10'] = action['ex']['split 10'] * incs['split']
         deltas['ex']['split 11'] = action['ex']['split 11'] * incs['split']
+
+        deltas['wrx'] = {}
+        deltas['erx'] = {}
 
         deltas['wrx']['split 00'] = action['wrx']['split 00'] * incs['split']
         deltas['erx']['split 01'] = action['erx']['split 01'] * incs['split']
