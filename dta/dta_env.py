@@ -23,6 +23,11 @@ class dta_env():
         self.action_space.mins = self.net.constraints()[0]
         self.action_space.maxs = self.net.constraints()[1]
         
+        self.action_space.maxIncrements = {
+            'split' : 0.05, #percent
+            'barrier' : 10., #timesteps
+            'ramp' : 25/3600     #people per timestep
+        }
     
     def reset(self,seed=1831):
         """
@@ -69,37 +74,7 @@ class dta_env():
         return next_state, last_step_reward, done
 
     def updateConfig(self,actions):
-        # if 'nb ramp' in actions:
-        #     self.cfg['nb ramp'] += actions['nb ramp']*25/3600
-        # if 'sb ramp' in actions:
-        #     self.cfg['sb ramp'] += actions['sb ramp']*25/3600
 
-        # if 'wx' in actions:
-        #     self.cfg['wx']['split 00'] += 0.05*actions['wx']['split 00']
-        #     self.cfg['wx']['split 01'] += 0.05*actions['wx']['split 01']
-        #     self.cfg['wx']['split 10'] += 0.05*actions['wx']['split 10']
-        #     self.cfg['wx']['split 11'] += 0.05*actions['wx']['split 11']
-        #     self.cfg['wx']['barrier 0'] += 5*actions['wx']['barrier 0']
-        #     self.cfg['wx']['barrier 1'] += 5*actions['wx']['barrier 1']
-        # if 'ex' in actions:
-        #     self.cfg['ex']['split 00'] += 0.05*actions['ex']['split 00']
-        #     self.cfg['ex']['split 01'] += 0.05*actions['ex']['split 01']
-        #     self.cfg['ex']['split 10'] += 0.05*actions['ex']['split 10']
-        #     self.cfg['ex']['split 11'] += 0.05*actions['ex']['split 11']
-        #     self.cfg['ex']['barrier 0'] += 5*actions['ex']['barrier 0']
-        #     self.cfg['ex']['barrier 1'] += 5*actions['ex']['barrier 1']
-
-        # if 'wrx' in actions:
-        #     self.cfg['wrx']['split 00'] += 0.05*actions['wrx']['split 00']
-        #     self.cfg['wrx']['barrier 0'] += 5*actions['wrx']['barrier 0']
-        #     self.cfg['wrx']['barrier 1'] += 5*actions['wrx']['barrier 1']
-
-        # if 'erx' in actions:
-        #     self.cfg['erx']['split 01'] += 0.05*actions['erx']['split 01']
-        #     self.cfg['erx']['barrier 0'] += 5*actions['erx']['barrier 0']
-        #     self.cfg['erx']['barrier 1'] += 5*actions['erx']['barrier 1']
-
-        # self.net.setConfig(self.cfg)
         deltas = self.getDeltas(actions)
         
         self.cfg['nb ramp'] += deltas['nb ramp']
@@ -147,10 +122,39 @@ class dta_env():
         
         self.net.setConfig(self.cfg)
 
-        
+
     def random_action(self):
         """
         Generate a random action, to be used before RL model training has stabilized.
         """
         # TODO: complete
         raise NotImplementedError()
+
+    def getDeltas(self,action):
+        deltas = dict()
+        incs = self.action_space.maxIncrements
+        
+        deltas['wx']['split 00'] = action['wx']['split 00'] * incs['split']
+        deltas['wx']['split 01'] = action['wx']['split 01'] * incs['split']
+        deltas['wx']['split 10'] = action['wx']['split 10'] * incs['split']
+        deltas['wx']['split 11'] = action['wx']['split 11'] * incs['split']
+        
+        deltas['ex']['split 00'] = action['ex']['split 00'] * incs['split']
+        deltas['ex']['split 01'] = action['ex']['split 01'] * incs['split']
+        deltas['ex']['split 10'] = action['ex']['split 10'] * incs['split']
+        deltas['ex']['split 11'] = action['ex']['split 11'] * incs['split']
+
+        deltas['wrx']['split 00'] = action['wrx']['split 00'] * incs['split']
+        deltas['erx']['split 01'] = action['erx']['split 01'] * incs['split']
+
+        deltas['wx']['barrier 0'] = action['wx']['barrier 0'] * incs['barrier']
+        deltas['wx']['barrier 1'] = action['wx']['barrier 1'] * incs['barrier']
+        deltas['ex']['barrier 0'] = action['ex']['barrier 0'] * incs['barrier']
+        deltas['ex']['barrier 1'] = action['ex']['barrier 1'] * incs['barrier']
+
+        deltas['nb ramp'] = action['nb ramp'] * incs['ramp']
+        deltas['sb ramp'] = action['sb ramp'] * incs['ramp']
+
+
+
+        
