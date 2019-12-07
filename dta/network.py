@@ -250,7 +250,7 @@ class Network:
 				self.links[ij].downstreamPathCount.append(dict())
 			
 		for t in r:
-			print(t)
+			# print(t)
 			# 2. Calculate sending and receiving flows for all links
 			for ij in self.links:
 				self.sendingFlow[ij], self.receivingFlow[ij] = self.links[ij].linkUpdate(t)
