@@ -33,6 +33,7 @@ class dta_env():
         """
         resets the state of the model to the beginning of the/a day
         """
+        self.net.resetPaths()
         self.net.setConfig(self.cfg)
 
         rng = random.RandomState(seed)

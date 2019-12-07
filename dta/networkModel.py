@@ -8,9 +8,7 @@ class NetworkModel(Network):
     def __init__(self, timeHorizon=3600, seed=1883):
 
         self.links = dict()
-        self.ODs = list()
-        self.pathFlows = dict()
-        self.pathTravelTimes = dict()
+        # self.ODs = list()
 
         self.timestep = 1
         # self.numHours = 1
@@ -27,6 +25,11 @@ class NetworkModel(Network):
         self.buildNodes()
         
         self.attachLinks()
+    
+    def resetPaths(self):
+        self.pathFlows = dict()
+        self.pathTravelTimes = dict()
+
         
     def buildLinks(self):
         freewaySpeed = 65
@@ -397,7 +400,7 @@ class NetworkModel(Network):
 
     def setDemand(self,volumes,rng):
                 #OD demand
-
+        self.ODs = list()
         #demand from north freeway
         nFwy = StochasticOD(0,8,self.timeHorizon,volumes['nFwy'],rng)
         self.ODs.append(nFwy)
