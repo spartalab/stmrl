@@ -584,7 +584,45 @@ class NetworkModel(Network):
         
 
     def getState(self):
-        ret = dict()
-        for link in self.links:
-            ret[link] = self.links[link].density()
+
+        ret = list()
+        ret.append(self.links['FWY NB U'].density())
+        ret.append(self.links['FWY NB C'].density())
+        ret.append(self.links['FWY NB D'].density())
+        ret.append(self.links['FWY NB XR'].density())
+        ret.append(self.links['FWY NB NRU'].density())
+        ret.append(self.links['FWY NB NRD'].density())
+
+        ret.append(self.links['FWY SB U'].density())
+        ret.append(self.links['FWY SB C'].density())
+        ret.append(self.links['FWY SB D'].density())
+        ret.append(self.links['FWY SB XR'].density())
+        ret.append(self.links['FWY SB NRU'].density())
+        ret.append(self.links['FWY SB NRD'].density())
+
+        ret.append(self.links['XS EB I'].density())
+        ret.append(self.links['XS EB A'].density())
+        ret.append(self.links['XS EB C'].density())
+        ret.append(self.links['XS EB D'].density())
+        ret.append(self.links['XS EB O'].density())
+
+        ret.append(self.links['XS WB I'].density())
+        ret.append(self.links['XS WB A'].density())
+        ret.append(self.links['XS WB C'].density())
+        ret.append(self.links['XS WB D'].density())
+        ret.append(self.links['XS WB O'].density())
+
+        ret.append(self.links['EC NB I'].density())
+        ret.append(self.links['EC NB O'].density())
+        ret.append(self.links['EC SB I'].density())
+        ret.append(self.links['EC SB O'].density())
+
+        ret.append(self.links['WC NB I'].density())
+        ret.append(self.links['WC NB O'].density())
+        ret.append(self.links['WC SB I'].density())
+        ret.append(self.links['WC SB O'].density())
+
+        # ret = dict()
+        # for link in self.links:
+        #     ret[link] = self.links[link].density()
         return ret
