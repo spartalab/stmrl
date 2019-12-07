@@ -8,4 +8,4 @@ for i in range(30):
         state = env.reset()
         for _ in range(ni):
             _, rew, _ = env.step()
-        outfile.write(rew)
+            outfile.write(rew)
