@@ -9,3 +9,4 @@ for i in range(30):
         for _ in range(ni):
             _, rew, _ = env.step()
             outfile.write(str(rew)+"\n")
+            outfile.flush()
