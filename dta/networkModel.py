@@ -26,9 +26,14 @@ class NetworkModel(Network):
         
         self.attachLinks()
     
-    def resetPaths(self):
+    def reset(self):
         self.pathFlows = dict()
         self.pathTravelTimes = dict()
+        self.buildLinks()
+
+        self.buildNodes()
+        
+        self.attachLinks()
 
         
     def buildLinks(self):
