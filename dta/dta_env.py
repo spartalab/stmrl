@@ -46,8 +46,10 @@ class dta_env():
         self.curTime = self.warmup
         self.elapsedIntervals = 0
 
-        state = (self.elapsedIntervals,self.net.getState(),self.cfg) # fetch state
-
+        # state = (self.elapsedIntervals,self.net.getState(),self.cfg) # fetch state
+        state = [self.elapsedIntervals]
+        state.extend(self.net.getState())
+        state.extend(vectorize(self.cfg))
         return state
 
     
@@ -77,7 +79,7 @@ class dta_env():
         next_state = [self.elapsedIntervals]
         next_state.extend(self.net.getState())
         next_state.extend(vectorize(self.cfg))
-        next_state = (self.elapsedIntervals,self.net.getState(),self.cfg) # fetch state
+        # next_state = (self.elapsedIntervals,self.net.getState(),self.cfg) # fetch state
 
         return next_state, last_step_reward, done
 
