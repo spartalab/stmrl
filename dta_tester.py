@@ -1,5 +1,11 @@
 from dta.dta_env import dta_env
 
 env = dta_env(interval=60*60*5)
-state = env.reset()
-state = env.step(env.random_action())
+for i in range(30):
+    with open(""+i+".txt",'w') as outfile:
+        ni = 60//5
+        env = dta_env(interval=60*5, numIntervals=ni)
+        state = env.reset()
+        for _ in range(ni):
+            _, rew, _ = env.step()
+        outfile.write(rew)

@@ -72,7 +72,7 @@ class dta_env():
         tstt = self.net.calculateTSTT(intv)
         tfft = self.net.calculateTFFT(intv)
         last_step_reward = tfft - tstt
-        print(last_step_reward)
+        # print(last_step_reward)
 
         done = self.elapsedIntervals == self.numIntervals
 
