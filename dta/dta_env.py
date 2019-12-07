@@ -29,7 +29,7 @@ class dta_env():
             'ramp' : 25/3600     #people per timestep
         }
     
-    def reset(self,seed=1831):
+    def reset(self,seed=None):
         """
         resets the state of the model to the beginning of the/a day
         """
@@ -58,7 +58,7 @@ class dta_env():
         """
         #process actions
         if a is not None:
-            self.updateConfig(a)
+            self.updateConfig(dictify(a))
             # self.net.setConfig(a)
 
         intv = range(self.curTime,self.curTime+self.interval)
@@ -74,6 +74,9 @@ class dta_env():
 
         done = self.elapsedIntervals == self.numIntervals
 
+        next_state = [self.elapsedIntervals]
+        next_state.extend(self.net.getState())
+        next_state.extend(vectorize(self.cfg))
         next_state = (self.elapsedIntervals,self.net.getState(),self.cfg) # fetch state
 
         return next_state, last_step_reward, done
@@ -170,7 +173,9 @@ class dta_env():
         }
 
 
-        return action
+        return vectorize(action)
+
+
 
     def getDeltas(self,action):
         deltas = dict()
@@ -206,4 +211,68 @@ class dta_env():
 
         return deltas
 
+def vectorize(action:dict):
+    vector = list()
+    vector.append(action['nb ramp'])
+    vector.append(action['sb ramp'])
+    
+    vector.append(action['wx']['split 00'])
+    vector.append(action['wx']['split 01'])
+    vector.append(action['wx']['split 10'])
+    vector.append(action['wx']['split 11'])
+    vector.append(action['wx']['barrier 0'])
+    vector.append(action['wx']['barrier 1'])
+    
+    vector.append(action['ex']['split 00'])
+    vector.append(action['ex']['split 01'])
+    vector.append(action['ex']['split 10'])
+    vector.append(action['ex']['split 11'])
+    vector.append(action['ex']['barrier 0'])
+    vector.append(action['ex']['barrier 1'])
+
+    vector.append(action['wrx']['split 00'])
+    vector.append(action['wrx']['barrier 0'])
+    vector.append(action['wrx']['barrier 1'])
+    
+    vector.append(action['erx']['split 01'])
+    vector.append(action['erx']['barrier 0'])
+    vector.append(action['erx']['barrier 1'])
+    return vector
+
+
+def dictify(vector):
+    action = {
+        'nb ramp' : vector[0],
+        'sb ramp' : vector[1],
+
+        'wx' : {
+            'split 00' : vector[2],
+            'split 01' : vector[3],
+            'split 10' : vector[4],
+            'split 11' : vector[5],
+            'barrier 0': vector[6],
+            'barrier 1': vector[7]
+        },
+
+        'ex' : {
+            'split 00' : vector[8],
+            'split 01' : vector[9],
+            'split 10' : vector[10],
+            'split 11' : vector[11],
+            'barrier 0': vector[12],
+            'barrier 1': vector[13]
+        },
         
+        'wrx' : {
+            'split 00' : vector[14],
+            'barrier 0': vector[15],
+            'barrier 1': vector[16]
+        },
+
+        'erx' : {
+            'split 01' : vector[17],
+            'barrier 0': vector[18],
+            'barrier 1': vector[19]
+        }
+    }
+    return action
