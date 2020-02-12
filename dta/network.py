@@ -231,6 +231,9 @@ class Network:
 				self.pathFlows[path] = [0 for t in range(0,self.timeHorizon)]
 		self.updatePathFlows(self.findAllShortestPaths(), 1.0)
 			  
+	def getTotalVehicles(self,t):
+		return sum(link.vehiclesOnLink(t) for link in self.links.values())
+
 	def loadNetwork(self,r=None,init=True):
 		"""
 		Implements the network loading algorithm described in Chapter 10 of the text, using calls
@@ -238,6 +241,9 @@ class Network:
 		"""
 		if r is None:
 			r = range(self.timeHorizon)
+
+		loaded = 0
+		terminated = 0
 
 		# 1. Initialize; use dict's to store sending and receiving flows for each link
 		if init:
@@ -268,10 +274,12 @@ class Network:
 				self.nodes[i].moveFlow(transitionFlows, t)
 				
 			# 5. Load trips at origins
-			self.loadTrips(t)
+			loaded += self.loadTrips(t)
 			
 			# 6. Terminate trips at destinations
-			self.terminateTrips(t)
+			terminated += self.terminateTrips(t)
+
+		return loaded, terminated
 			
 	def loadTrips(self, t):
 		"""
@@ -280,6 +288,7 @@ class Network:
 		be a problem as long as your centroid connectors are coded correctly.
 		"""
 		inFlows = dict() # a two-key dictionary; first key is starting link, second key is path
+		loaded = 0
 		for ij in self.links:
 			inFlows[ij] = dict()
 			
@@ -287,20 +296,26 @@ class Network:
 			for path in OD.paths:
 				if self.pathFlows[path][t] > 0:
 					inFlows[path[0]][path] = self.pathFlows[path][t]
+					loaded += self.pathFlows[path][t]
 					
 		for ij in self.links:
 			if hasattr(self.nodes[self.links[ij].tail], 'isCentroid'):
 				self.links[ij].flowIn(inFlows[ij])
+		return loaded
 	
 	def terminateTrips(self, t):
 		"""
 		Removes flow from the network at the destination end of paths.
 		"""
+		terminated = 0
 		for i in range(self.numNodes):
 			if hasattr(self.nodes[i], 'isDestination'):
 				self.nodes[i].calculateDisaggregateSendingFlows(t)
 				for ij in self.reverseStar[i]:
-					self.links[ij].flowOut(self.nodes[i].disaggregateSendingFlow[self.links[ij]])
+					outFlow = self.nodes[i].disaggregateSendingFlow[self.links[ij]]
+					self.links[ij].flowOut(outFlow)
+					terminated += sum(outFlow.values())
+		return terminated
 	
 	def calculateTravelTimes(self,rnge=None):
 		"""

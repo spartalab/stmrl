@@ -19,7 +19,7 @@ class dta_env():
 
         # dimensionality of action and state space, as properties for the RL model
         self.action_dim = 20
-        self.state_dim = 51
+        self.state_dim = 81
         self.action_mins = self.net.constraints()[0]
         self.action_maxs = self.net.constraints()[1]
         
@@ -49,7 +49,7 @@ class dta_env():
 
         # state = (self.elapsedIntervals,self.net.getState(),self.cfg) # fetch state
         state = [self.elapsedIntervals]
-        state.extend(self.net.getState())
+        state.extend(self.net.getState(range(self.warmup)))
         state.extend(vectorize(self.cfg))
         return state
 
@@ -65,20 +65,23 @@ class dta_env():
             # self.net.setConfig(a)
 
         intv = range(self.curTime,self.curTime+self.interval)
-        self.net.loadNetwork(intv,False)
+        starting = self.net.getTotalVehicles(self.curTime)
+        
+        loaded, terminated = self.net.loadNetwork(intv,False)
         self.curTime += self.interval
         self.elapsedIntervals += 1
 
-        self.net.calculateTravelTimes(intv)
-        tstt = self.net.calculateTSTT(intv)
-        tfft = self.net.calculateTFFT(intv)
-        last_step_reward = tfft - tstt
+        # self.net.calculateTravelTimes(intv)
+        # tstt = self.net.calculateTSTT(intv)
+        # tfft = self.net.calculateTFFT(intv)
+        # last_step_reward = tfft - tstt
         # print(last_step_reward)
+        last_step_reward = (terminated - loaded)/(starting*loaded)
 
         done = self.elapsedIntervals == self.numIntervals
 
         next_state = [self.elapsedIntervals]
-        next_state.extend(self.net.getState())
+        next_state.extend(self.net.getState(intv))
         next_state.extend(vectorize(self.cfg))
         # next_state = (self.elapsedIntervals,self.net.getState(),self.cfg) # fetch state
 

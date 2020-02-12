@@ -107,9 +107,6 @@ class CellTransmissionModelLink(Link):
       totalOut = sum(pathFlows.values())
       self.cells[len(self.cells)-1].removeVehicles(totalOut)
 
-   def density(self):
-      return sum(cell.vehicles for cell in self.cells)/self.length
-
 class LinkTransmissionModelLink(Link):
 
    def calculateSendingFlow(self, t):

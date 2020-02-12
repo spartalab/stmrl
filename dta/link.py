@@ -147,5 +147,31 @@ class Link:
    def calculateTravelTime(self, t):
       pass
 
+   def density(self,t):
+      return (self.upstreamCount(t) - self.downstreamCount(t))/self.length
+
+   def averageSpeed(self,timeRange):
+      cumulativeSpeed = 0
+      for t in timeRange:
+         density = self.density(t)
+         if density == 0:
+            cumulativeSpeed += self.freeFlowSpeed
+         else:
+            cumulativeSpeed += (0.5*(self.upstreamCount(t)-self.upstreamCount(t-1)) + 0.5*(self.downstreamCount(t)-self.downstreamCount(t-1)))/density
+
+      return cumulativeSpeed/len(timeRange)
+
+   def enteredDuring(self,timeRange):
+      cumulativeVehicles = 0
+      for t in timeRange:
+         cumulativeVehicles += self.upstreamCount(t) - self.upstreamCount(t-1)
+      return cumulativeVehicles
+
+   def exitedDuring(self,timeRange):
+      cumulativeVehicles = 0
+      for t in timeRange:
+         cumulativeVehicles += self.downstreamCount(t) - self.downstreamCount(t-1)
+      return cumulativeVehicles
+
    def __hash__(self):
       return hash(self.ID)
